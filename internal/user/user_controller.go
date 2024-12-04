@@ -3,6 +3,7 @@ package user
 import (
 	"net/http"
 
+	"github.com/Lunarisnia/inventory-manager/database/repo"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,12 +15,15 @@ import (
 // TODO: HARD: Auth middleware
 
 type UserController struct {
+	repository *repo.Queries
 }
 
-func NewUserController(r *gin.RouterGroup) *UserController {
+func NewUserController(r *gin.RouterGroup, repository *repo.Queries) *UserController {
 	group := r.Group("/user")
 
-	ctl := UserController{}
+	ctl := UserController{
+		repository: repository,
+	}
 	group.GET("/ping", ctl.Ping)
 
 	return &ctl
