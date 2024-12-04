@@ -1,7 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"context"
+
+	"github.com/Lunarisnia/inventory-manager/internal/core"
+)
 
 func main() {
-	fmt.Println("Hello, World")
+	app := core.NewApp(context.Background())
+	app.Run()
 }
