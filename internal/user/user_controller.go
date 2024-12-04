@@ -6,6 +6,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// TODO: EASY: Add register user endpoint
+// TODO: EASY: Add Change Password Endpoint
+// TODO: MEDIUM: Add Login endpoint
+// TODO: MEDIUM: Add Borrow item endpoint
+// TODO: HARD: Add Return item endpoint with admin barcode validation via config
+// TODO: HARD: Auth middleware
+
 type UserController struct {
 }
 

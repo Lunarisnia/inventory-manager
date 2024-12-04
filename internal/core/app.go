@@ -19,7 +19,7 @@ func NewApp(ctx context.Context) *App {
 	e := gin.Default()
 	r := e.Group("/v1")
 
-	conn, err := db.Connect(ctx, "postgres://root:password@localhost:5432/inventory-manager")
+	conn, err := db.Connect(ctx, "postgres://postgres:root@localhost:5432/inventory-manager")
 	if err != nil {
 		panic(err)
 	}
