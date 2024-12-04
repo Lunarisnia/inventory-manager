@@ -4,10 +4,34 @@
 
 package repo
 
+import (
+	"github.com/jackc/pgx/v5/pgtype"
+)
+
+type BorrowList struct {
+	ID         int32
+	UserID     int32
+	ItemID     int32
+	BorrowAt   int64
+	ReturnedAt pgtype.Int8
+	CreatedAt  int64
+	UpdatedAt  int64
+}
+
+type Item struct {
+	ID        int32
+	Name      string
+	Image     string
+	Quantity  int32
+	CreatedAt int64
+	UpdatedAt int64
+}
+
 type User struct {
 	ID        int32
 	Name      string
 	Nis       string
+	Password  string
 	CreatedAt int64
 	UpdatedAt int64
 }
