@@ -14,3 +14,7 @@ DELETE FROM users WHERE id = $1;
 UPDATE users
 	SET password = $2
 WHERE id = $1 RETURNING *;
+
+-- name: GetUserByNIS :one
+SELECT * FROM users
+WHERE nis = $1 LIMIT 1;

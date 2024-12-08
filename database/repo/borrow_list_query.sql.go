@@ -153,6 +153,42 @@ func (q *Queries) ListAllBorrowListByUserID(ctx context.Context, userID int32) (
 	return items, nil
 }
 
+const testBorrowList = `-- name: TestBorrowList :one
+SELECT id, user_id, item_id, borrow_at, returned_at, created_at, updated_at FROM borrow_lists WHERE id = $1
+`
+
+func (q *Queries) TestBorrowList(ctx context.Context, id int32) (BorrowList, error) {
+	row := q.db.QueryRow(ctx, testBorrowList, id)
+	var i BorrowList
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.ItemID,
+		&i.BorrowAt,
+		&i.ReturnedAt,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const updateBorrowList = `-- name: UpdateBorrowList :exec
+UPDATE borrow_lists 
+	set returned_at = $2
+WHERE id = $1
+RETURNING id, user_id, item_id, borrow_at, returned_at, created_at, updated_at
+`
+
+type UpdateBorrowListParams struct {
+	ID         int32
+	ReturnedAt pgtype.Int8
+}
+
+func (q *Queries) UpdateBorrowList(ctx context.Context, arg UpdateBorrowListParams) error {
+	_, err := q.db.Exec(ctx, updateBorrowList, arg.ID, arg.ReturnedAt)
+	return err
+}
+
 const updateBorrowListReturnedAt = `-- name: UpdateBorrowListReturnedAt :exec
 UPDATE borrow_lists
 	set returned_at = $2

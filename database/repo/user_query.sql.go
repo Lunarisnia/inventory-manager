@@ -86,3 +86,22 @@ func (q *Queries) GetUser(ctx context.Context, id int32) (User, error) {
 	)
 	return i, err
 }
+
+const getUserByNIS = `-- name: GetUserByNIS :one
+SELECT id, name, nis, password, created_at, updated_at FROM users
+WHERE nis = $1 LIMIT 1
+`
+
+func (q *Queries) GetUserByNIS(ctx context.Context, nis string) (User, error) {
+	row := q.db.QueryRow(ctx, getUserByNIS, nis)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Nis,
+		&i.Password,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
