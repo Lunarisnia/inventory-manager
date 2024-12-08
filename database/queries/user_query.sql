@@ -9,3 +9,8 @@ INSERT INTO users (
 
 -- name: DeleteUser :exec
 DELETE FROM users WHERE id = $1;
+
+-- name: ChangePassword :exec
+UPDATE users
+	SET password = $2
+WHERE id = $1 RETURNING *;

@@ -9,6 +9,22 @@ import (
 	"context"
 )
 
+const changePassword = `-- name: ChangePassword :exec
+UPDATE users
+	SET password = $2
+WHERE id = $1 RETURNING id, name, nis, password, created_at, updated_at
+`
+
+type ChangePasswordParams struct {
+	ID       int32
+	Password string
+}
+
+func (q *Queries) ChangePassword(ctx context.Context, arg ChangePasswordParams) error {
+	_, err := q.db.Exec(ctx, changePassword, arg.ID, arg.Password)
+	return err
+}
+
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (
 	name, nis, password, created_at, updated_at
