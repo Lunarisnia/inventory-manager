@@ -25,12 +25,18 @@ func NewUserController(r *gin.RouterGroup, repository *repo.Queries) *UserContro
 		repository: repository,
 	}
 	group.GET("/ping", ctl.Ping)
-
+	group.GET("/pong", ctl.Pong)
 	return &ctl
 }
 
 func (u *UserController) Ping(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"foo": "bar",
+	})
+}
+func (u *UserController) Pong(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"bizz":  "buzz",
+		"bizz1": "buzz2",
 	})
 }
