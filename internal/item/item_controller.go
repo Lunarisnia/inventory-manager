@@ -21,6 +21,7 @@ func NewItemController(r *gin.RouterGroup, repository *repo.Queries) *ItemContro
 	}
 	group.GET("/ping", ctl.Ping)
 	group.POST("/borrow", ctl.Borrow)
+	group.GET("/bastard", ctl.Bastard)
 
 	return &ctl
 }
@@ -34,5 +35,10 @@ func (i *ItemController) Ping(c *gin.Context) {
 func (i *ItemController) Borrow(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Ok",
+	})
+}
+func (i *ItemController) Bastard(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"hey_you_fuckYOU": "yes_i do",
 	})
 }
