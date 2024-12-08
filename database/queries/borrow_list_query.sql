@@ -23,12 +23,3 @@ INSERT INTO borrow_lists (
 -- name: DeleteBorrowList :exec
 DELETE FROM borrow_lists WHERE id = $1;
 
--- name: TestBorrowList :one
-SELECT * FROM borrow_lists WHERE id = $1;
-
--- name: UpdateBorrowList :exec
-UPDATE borrow_lists 
-	set returned_at = $2
-WHERE id = $1
-RETURNING *;
-
