@@ -21,14 +21,16 @@ type UserController struct {
 	tokenManager auth.TokenManager
 }
 
-func NewUserController(r *gin.RouterGroup, repository *repo.Queries) *UserController {
+func NewUserController(r *gin.RouterGroup, repository *repo.Queries, tokenManager auth.TokenManager) *UserController {
 	group := r.Group("/user")
 
 	ctl := UserController{
-		repository: repository,
+		repository:   repository,
+		tokenManager: tokenManager,
 	}
 	group.GET("/ping", ctl.Ping)
 	group.GET("/pong", ctl.Pong)
+	group.POST("/login", ctl.Login)
 	return &ctl
 }
 

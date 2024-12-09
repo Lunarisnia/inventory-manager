@@ -16,6 +16,10 @@ type TokenManager interface {
 	Generate(ctx context.Context, user *repo.User) (string, error)
 }
 
+func NewTokenManager() TokenManager {
+	return &tokenManagerImpl{}
+}
+
 type tokenManagerImpl struct{}
 
 func (t *tokenManagerImpl) Generate(ctx context.Context, user *repo.User) (string, error) {
@@ -27,7 +31,11 @@ func (t *tokenManagerImpl) Generate(ctx context.Context, user *repo.User) (strin
 		"nis": user.Nis,
 		"exp": time.Now().Add(5 * time.Hour).Unix(),
 	})
-	return token.Raw, nil
+	tokenString, err := token.SignedString([]byte("foobar"))
+	if err != nil {
+		return "", err
+	}
+	return tokenString, nil
 }
 
 func validate(ctx context.Context, bearerToken string) (context.Context, error) {
