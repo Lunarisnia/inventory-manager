@@ -53,12 +53,20 @@ func validate(ctx context.Context, bearerToken string) (context.Context, error) 
 
 func Authorized() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		bearerToken := c.Request.Header["Authorization"][0]
-		ctx, err := validate(c.Request.Context(), bearerToken)
+		bearerToken := c.Request.Header["Authorization"]
+		if len(bearerToken) <= 0 {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"message": "Unauthorized",
+			})
+			c.Abort()
+			return
+		}
+		ctx, err := validate(c.Request.Context(), bearerToken[0])
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"message": "Unauthorized",
 			})
+			c.Abort()
 			return
 		}
 		c.Request = c.Request.WithContext(ctx)
