@@ -27,9 +27,9 @@ func (t *tokenManagerImpl) Generate(ctx context.Context, user *repo.User) (strin
 		return "", errors.New("user can't be empty")
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id":  user.ID,
-		"nis": user.Nis,
-		"exp": time.Now().Add(5 * time.Hour).Unix(),
+		"user_id": user.ID,
+		"nis":     user.Nis,
+		"exp":     time.Now().Add(5 * time.Hour).Unix(),
 	})
 	tokenString, err := token.SignedString([]byte("foobar"))
 	if err != nil {
