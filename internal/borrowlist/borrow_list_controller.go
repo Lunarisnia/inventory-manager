@@ -50,7 +50,28 @@ func (b *BorrowListController) BorrowItem(c *gin.Context) {
 		})
 		return
 	}
-	// TODO: Add limit depending on item available
+
+	borrowedList, err := b.repository.ListActiveBorrowListByItemID(c.Request.Context(), borrowItem.ItemID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err,
+		})
+		return
+	}
+	item, err := b.repository.GetItem(c.Request.Context(), borrowItem.ItemID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err,
+		})
+		return
+	}
+
+	if len(borrowedList) >= int(item.Quantity) {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "item is out of stock",
+		})
+		return
+	}
 
 	newBorrowList, err := b.repository.CreateBorrowList(c.Request.Context(), repo.CreateBorrowListParams{
 		UserID:    claim.UserID,
