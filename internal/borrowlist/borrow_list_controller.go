@@ -10,8 +10,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// TODO: MEDIUM: Add Endpoint to get all borrow list by id
-
 type BorrowListController struct {
 	repository *repo.Queries
 }

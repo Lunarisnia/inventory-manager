@@ -70,6 +70,37 @@ func (q *Queries) GetItem(ctx context.Context, id int32) (Item, error) {
 	return i, err
 }
 
+const listItem = `-- name: ListItem :many
+SELECT id, name, image, quantity, created_at, updated_at FROM items
+`
+
+func (q *Queries) ListItem(ctx context.Context) ([]Item, error) {
+	rows, err := q.db.Query(ctx, listItem)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Item
+	for rows.Next() {
+		var i Item
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Image,
+			&i.Quantity,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateItemQuantity = `-- name: UpdateItemQuantity :exec
 UPDATE items 
 	set quantity = $2

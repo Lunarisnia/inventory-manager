@@ -14,3 +14,6 @@ RETURNING *;
 -- name: DeleteItem :exec
 DELETE FROM items
 WHERE id = $1;
+
+-- name: ListItem :many
+SELECT * FROM items;
