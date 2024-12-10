@@ -5,5 +5,6 @@ type BorrowNewItem struct {
 }
 
 type ReturnItemRequest struct {
-	ItemID int32 `json:"item_id"`
+	ItemID     int32  `json:"item_id"`
+	ReturnCode string `json:"return_code"`
 }

@@ -128,6 +128,13 @@ func (b *BorrowListController) ReturnItem(c *gin.Context) {
 		return
 	}
 
+	if returnedItem.ReturnCode != "fufufafa" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Wrong return code",
+		})
+		return
+	}
+
 	err := b.repository.UpdateBorrowListReturnedAt(c.Request.Context(), repo.UpdateBorrowListReturnedAtParams{
 		UserID: claim.UserID,
 		ItemID: returnedItem.ItemID,
