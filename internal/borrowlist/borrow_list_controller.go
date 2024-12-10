@@ -22,6 +22,7 @@ func NewBorrowListController(r *gin.RouterGroup, repository *repo.Queries) *Borr
 	}
 	group.GET("", auth.Authorized(), ctl.ListBorrowList)
 	group.POST("/", auth.Authorized(), ctl.BorrowItem)
+	group.POST("/return", auth.Authorized(), ctl.ReturnItem)
 	group.GET("/ping", ctl.Ping)
 
 	return &ctl
@@ -107,5 +108,37 @@ func (b *BorrowListController) ListBorrowList(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"data": borrowList,
+	})
+}
+
+func (b *BorrowListController) ReturnItem(c *gin.Context) {
+	claim, ok := c.Request.Context().Value("jwt").(*auth.JWTClaim)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "internal server error",
+		})
+		return
+	}
+	returnedItem := borrowlistmodels.ReturnItemRequest{}
+	if err := c.ShouldBindJSON(&returnedItem); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err,
+		})
+		return
+	}
+
+	err := b.repository.UpdateBorrowListReturnedAt(c.Request.Context(), repo.UpdateBorrowListReturnedAtParams{
+		UserID: claim.UserID,
+		ItemID: returnedItem.ItemID,
+	})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": err,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"data": "Ok",
 	})
 }

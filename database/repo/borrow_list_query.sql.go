@@ -155,17 +155,18 @@ func (q *Queries) ListAllBorrowListByUserID(ctx context.Context, userID int32) (
 
 const updateBorrowListReturnedAt = `-- name: UpdateBorrowListReturnedAt :exec
 UPDATE borrow_lists
-	set returned_at = $2
-WHERE id = $1
+	set returned_at = $3
+WHERE id = (SELECT (id) FROM borrow_lists WHERE borrow_lists.user_id = $1 AND borrow_lists.item_id = $2 LIMIT 1)
 RETURNING id, user_id, item_id, borrow_at, returned_at, created_at, updated_at
 `
 
 type UpdateBorrowListReturnedAtParams struct {
-	ID         int32
+	UserID     int32
+	ItemID     int32
 	ReturnedAt pgtype.Int8
 }
 
 func (q *Queries) UpdateBorrowListReturnedAt(ctx context.Context, arg UpdateBorrowListReturnedAtParams) error {
-	_, err := q.db.Exec(ctx, updateBorrowListReturnedAt, arg.ID, arg.ReturnedAt)
+	_, err := q.db.Exec(ctx, updateBorrowListReturnedAt, arg.UserID, arg.ItemID, arg.ReturnedAt)
 	return err
 }

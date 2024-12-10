@@ -5,11 +5,10 @@ import (
 	"time"
 
 	"github.com/Lunarisnia/inventory-manager/database/repo"
+	"github.com/Lunarisnia/inventory-manager/internal/auth"
 	"github.com/Lunarisnia/inventory-manager/internal/item/itemodels"
 	"github.com/gin-gonic/gin"
 )
-
-// TODO: EASY: Add List item endpoint
 
 type ItemController struct {
 	repository *repo.Queries
@@ -22,8 +21,8 @@ func NewItemController(r *gin.RouterGroup, repository *repo.Queries) *ItemContro
 		repository: repository,
 	}
 	group.GET("/ping", ctl.Ping)
-	group.GET("/", ctl.ListItem)
-	group.POST("/", ctl.CreateNewItem)
+	group.GET("/", auth.Authorized(), ctl.ListItem)
+	group.POST("/", auth.Authorized(), ctl.CreateNewItem)
 
 	return &ctl
 }
