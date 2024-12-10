@@ -8,6 +8,7 @@ import (
 	"github.com/Lunarisnia/inventory-manager/internal/auth"
 	"github.com/Lunarisnia/inventory-manager/internal/borrowlist/borrowlistmodels"
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type BorrowListController struct {
@@ -130,6 +131,10 @@ func (b *BorrowListController) ReturnItem(c *gin.Context) {
 	err := b.repository.UpdateBorrowListReturnedAt(c.Request.Context(), repo.UpdateBorrowListReturnedAtParams{
 		UserID: claim.UserID,
 		ItemID: returnedItem.ItemID,
+		ReturnedAt: pgtype.Int8{
+			Int64: time.Now().Unix(),
+			Valid: true,
+		},
 	})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

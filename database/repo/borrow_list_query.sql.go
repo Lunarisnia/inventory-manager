@@ -156,7 +156,7 @@ func (q *Queries) ListAllBorrowListByUserID(ctx context.Context, userID int32) (
 const updateBorrowListReturnedAt = `-- name: UpdateBorrowListReturnedAt :exec
 UPDATE borrow_lists
 	set returned_at = $3
-WHERE id = (SELECT (id) FROM borrow_lists WHERE borrow_lists.user_id = $1 AND borrow_lists.item_id = $2 LIMIT 1)
+WHERE id = (SELECT (id) FROM borrow_lists WHERE borrow_lists.user_id = $1 AND borrow_lists.item_id = $2 AND borrow_lists.returned_at is null LIMIT 1)
 RETURNING id, user_id, item_id, borrow_at, returned_at, created_at, updated_at
 `
 

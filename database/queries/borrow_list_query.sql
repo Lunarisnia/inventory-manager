@@ -10,7 +10,7 @@ SELECT * FROM borrow_lists WHERE user_id = $1 ORDER BY borrow_at DESC;
 -- name: UpdateBorrowListReturnedAt :exec
 UPDATE borrow_lists
 	set returned_at = $3
-WHERE id = (SELECT (id) FROM borrow_lists WHERE borrow_lists.user_id = $1 AND borrow_lists.item_id = $2 LIMIT 1)
+WHERE id = (SELECT (id) FROM borrow_lists WHERE borrow_lists.user_id = $1 AND borrow_lists.item_id = $2 AND borrow_lists.returned_at is null LIMIT 1)
 RETURNING *;
 
 -- name: CreateBorrowList :one
