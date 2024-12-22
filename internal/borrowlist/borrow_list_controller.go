@@ -107,8 +107,15 @@ func (b *BorrowListController) ListBorrowList(c *gin.Context) {
 		})
 		return
 	}
+	borrowListResponse := make([]borrowlistmodels.BorrowListResponse, 0)
+	for _, b := range borrowList {
+		response := borrowlistmodels.BorrowListResponse{}
+		response.ConvertRaw(b)
+		borrowListResponse = append(borrowListResponse, response)
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"data": borrowList,
+		"data": borrowListResponse,
 	})
 }
 
