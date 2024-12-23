@@ -2,7 +2,9 @@
 SELECT * FROM borrow_lists WHERE item_id = $1 AND returned_at IS NULL ORDER BY borrow_at DESC;
 
 -- name: ListActiveBorrowListByUserID :many
-SELECT * FROM borrow_lists WHERE user_id = $1 AND returned_at IS NULL ORDER BY borrow_at DESC;
+SELECT sqlc.embed(b), sqlc.embed(i)
+FROM borrow_lists as b INNER JOIN items as i ON b.item_id = i.id
+WHERE user_id = $1 AND returned_at IS NULL ORDER BY borrow_at DESC;
 
 -- name: ListAllBorrowListByUserID :many
 SELECT * FROM borrow_lists WHERE user_id = $1 ORDER BY borrow_at DESC;

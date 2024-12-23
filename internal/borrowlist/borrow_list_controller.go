@@ -1,6 +1,7 @@
 package borrowlist
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -102,6 +103,7 @@ func (b *BorrowListController) ListBorrowList(c *gin.Context) {
 	}
 	borrowList, err := b.repository.ListActiveBorrowListByUserID(c.Request.Context(), claim.UserID)
 	if err != nil {
+		fmt.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": err,
 		})

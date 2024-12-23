@@ -90,26 +90,39 @@ func (q *Queries) ListActiveBorrowListByItemID(ctx context.Context, itemID int32
 }
 
 const listActiveBorrowListByUserID = `-- name: ListActiveBorrowListByUserID :many
-SELECT id, user_id, item_id, borrow_at, returned_at, created_at, updated_at FROM borrow_lists WHERE user_id = $1 AND returned_at IS NULL ORDER BY borrow_at DESC
+SELECT b.id, b.user_id, b.item_id, b.borrow_at, b.returned_at, b.created_at, b.updated_at, i.id, i.name, i.image, i.quantity, i.created_at, i.updated_at
+FROM borrow_lists as b INNER JOIN items as i ON b.item_id = i.id
+WHERE user_id = $1 AND returned_at IS NULL ORDER BY borrow_at DESC
 `
 
-func (q *Queries) ListActiveBorrowListByUserID(ctx context.Context, userID int32) ([]BorrowList, error) {
+type ListActiveBorrowListByUserIDRow struct {
+	BorrowList BorrowList
+	Item       Item
+}
+
+func (q *Queries) ListActiveBorrowListByUserID(ctx context.Context, userID int32) ([]ListActiveBorrowListByUserIDRow, error) {
 	rows, err := q.db.Query(ctx, listActiveBorrowListByUserID, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []BorrowList
+	var items []ListActiveBorrowListByUserIDRow
 	for rows.Next() {
-		var i BorrowList
+		var i ListActiveBorrowListByUserIDRow
 		if err := rows.Scan(
-			&i.ID,
-			&i.UserID,
-			&i.ItemID,
-			&i.BorrowAt,
-			&i.ReturnedAt,
-			&i.CreatedAt,
-			&i.UpdatedAt,
+			&i.BorrowList.ID,
+			&i.BorrowList.UserID,
+			&i.BorrowList.ItemID,
+			&i.BorrowList.BorrowAt,
+			&i.BorrowList.ReturnedAt,
+			&i.BorrowList.CreatedAt,
+			&i.BorrowList.UpdatedAt,
+			&i.Item.ID,
+			&i.Item.Name,
+			&i.Item.Image,
+			&i.Item.Quantity,
+			&i.Item.CreatedAt,
+			&i.Item.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}
