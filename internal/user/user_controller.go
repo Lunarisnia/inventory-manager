@@ -13,7 +13,6 @@ import (
 // TODO: EASY: Add Change Password Endpoint
 // TODO: MEDIUM: Add Borrow item endpoint
 // TODO: HARD: Add Return item endpoint with admin barcode validation via config
-// TODO: HARD: Auth middleware
 
 type UserController struct {
 	repository   *repo.Queries
@@ -27,6 +26,7 @@ func NewUserController(r *gin.RouterGroup, repository *repo.Queries, tokenManage
 		repository:   repository,
 		tokenManager: tokenManager,
 	}
+	group.GET("/info", auth.Authorized(), ctl.GetUserInfo)
 	group.GET("/ping", auth.Authorized(), ctl.Ping)
 	group.GET("/pong", ctl.Pong)
 	group.POST("/login", ctl.Login)
@@ -102,5 +102,31 @@ func (u *UserController) Register(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": user,
+	})
+}
+
+func (u *UserController) GetUserInfo(c *gin.Context) {
+	claim, ok := c.Request.Context().Value("jwt").(*auth.JWTClaim)
+	if !ok {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "bad request you dingus.",
+		})
+		return
+	}
+	user, err := u.repository.GetUser(c.Request.Context(), claim.UserID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Wth",
+		})
+		return
+	}
+
+	userResponse := usermodels.GetUserInfoResponse{
+		Name: user.Name,
+		Nis:  user.Nis,
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": userResponse,
 	})
 }

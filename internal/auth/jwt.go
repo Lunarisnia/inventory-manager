@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -55,6 +56,7 @@ func Authorized() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		bearerToken := c.Request.Header["Authorization"]
 		if len(bearerToken) <= 0 {
+			fmt.Println("THIS ONE")
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"message": "Unauthorized",
 			})
@@ -63,6 +65,7 @@ func Authorized() gin.HandlerFunc {
 		}
 		ctx, err := validate(c.Request.Context(), bearerToken[0])
 		if err != nil {
+			fmt.Println("This Other One")
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"message": "Unauthorized",
 			})
